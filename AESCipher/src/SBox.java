@@ -33,6 +33,17 @@ public class SBox {
 		int x = (i-y)/16;
 		return new Integer(sbox[x][y]).byteValue();
 	}
+
+	public static byte getByteInv(byte b) {
+		for (int y = 0; y < sbox.length; y++) {
+			for (int x = 0; x < sbox[y].length; x++) {
+				if (sbox[x][y] == b) {
+					return new Integer((x*16)+y).byteValue();
+				}
+			}
+		}
+		return b;
+	}
 	
 	public static BitSet getRcon(int i){
 		byte[] bytes = new byte[]{rconTable[i],(byte) 0, (byte) 0, (byte) 0};
