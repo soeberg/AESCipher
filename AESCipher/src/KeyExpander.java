@@ -38,9 +38,7 @@ public class KeyExpander {
 	private static BitSet RotWord(BitSet word){
 		byte[] bytes = word.toByteArray();
 		byte[] result = new byte[bytes.length];
-		for (int i = 1; i < bytes.length; i++) {
-			result[i-1] = bytes[i];
-		}
+		System.arraycopy(bytes, 1, result, 0, bytes.length - 1);
 		result[bytes.length-1] = bytes[0];
 		return BitSet.valueOf(result);
 	}
@@ -48,9 +46,7 @@ public class KeyExpander {
 	private static BitSet InvRotWord(BitSet word) {
 		byte[] bytes = word.toByteArray();
 		byte[] result = new byte[bytes.length];
-		for (int i = 1; i < bytes.length; i++) {
-			result[i] = bytes[i-1];
-		}
+		System.arraycopy(bytes, 0, result, 1, bytes.length - 1);
 		result[0] = bytes[bytes.length-1];
 		return BitSet.valueOf(result);
 	}
