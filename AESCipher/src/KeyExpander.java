@@ -39,6 +39,14 @@ public class KeyExpander {
 		result[bytes.length-1] = bytes[0];
 		return BitSet.valueOf(result);
 	}
+
+	private static BitSet InvRotWord(BitSet word) {
+		byte[] bytes = word.toByteArray();
+		byte[] result = new byte[bytes.length];
+		return BitSet.valueOf(result);
+	}
+
+
 	
 	
 
