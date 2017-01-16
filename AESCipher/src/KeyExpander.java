@@ -36,8 +36,26 @@ public class KeyExpander {
 	}
 	
 	private static BitSet RotWord(BitSet word){
-		return null;
+		byte[] bytes = word.toByteArray();
+		byte[] result = new byte[bytes.length];
+		for (int i = 1; i < bytes.length; i++) {
+			result[i-1] = bytes[i];
+		}
+		result[bytes.length-1] = bytes[0];
+		return BitSet.valueOf(result);
 	}
+
+	private static BitSet InvRotWord(BitSet word) {
+		byte[] bytes = word.toByteArray();
+		byte[] result = new byte[bytes.length];
+		for (int i = 1; i < bytes.length; i++) {
+			result[i] = bytes[i-1];
+		}
+		result[0] = bytes[bytes.length-1];
+		return BitSet.valueOf(result);
+	}
+
+
 	
 	public BitSet XORRCon(BitSet b1,int i){
 		return null;
