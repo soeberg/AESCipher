@@ -1,7 +1,13 @@
 
 public class AESCipher {
 	
-	public static void main(String[] args){
-		System.out.print("hello world!");
+	
+	public String cipher(String plainText, String key){
+		
+		return "";
+	}
+	
+	public String decipher(String cipherText, String key ){
+		return "";
 	}
 }
