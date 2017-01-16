@@ -1,8 +1,9 @@
+package Cipher.AESCipher;
 import java.util.BitSet;
 
 public class SBox {
-	private static int[][] sbox;
-	private static byte[] rconTable;
+	private int[][] sbox;
+	private byte[] rconTable;
 	public SBox(){
 		this.sbox = new int[][]{
 								{0x63, 0x7c, 0x77, 0x7b, 0xf2,0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
@@ -27,17 +28,17 @@ public class SBox {
 	
 	
 	
-	public static byte getbyte(byte b){
+	public byte getbyte(byte b){
 		int i = b & 0xFF;
 		int y = i % 16;
 		int x = (i-y)/16;
-		return new Integer(sbox[x][y]).byteValue();
+		return new Integer(this.sbox[x][y]).byteValue();
 	}
 
-	public static byte getByteInv(byte b) {
-		for (int y = 0; y < sbox.length; y++) {
-			for (int x = 0; x < sbox[y].length; x++) {
-				if (sbox[x][y] == b) {
+	public byte getByteInv(byte b) {
+		for (int y = 0; y < this.sbox.length; y++) {
+			for (int x = 0; x < this.sbox[y].length; x++) {
+				if (this.sbox[x][y] == b) {
 					return new Integer((x*16)+y).byteValue();
 				}
 			}
@@ -45,16 +46,16 @@ public class SBox {
 		return b;
 	}
 	
-	public static BitSet getRcon(int i){
-		byte[] bytes = new byte[]{rconTable[i],(byte) 0, (byte) 0, (byte) 0};
+	public BitSet getRcon(int i){
+		byte[] bytes = new byte[]{this.rconTable[i],(byte) 0, (byte) 0, (byte) 0};
 		return BitSet.valueOf(bytes);
 	}
 	
 	private byte[] buildRconTable(){
-		byte[] rconTable = new byte[255];
+		byte[] rTable = new byte[255];
 		byte mod = (byte) 143;
 		byte rcon= 1;
-		rconTable[0] =rcon; 
+		rTable[0] =rcon; 
 		for( int i= 2; i < 255; i++){
 			if( (rcon & 0xFF) <= 128){
 				rcon = (byte) ((rcon & 0xFF)<<1);
@@ -62,8 +63,8 @@ public class SBox {
 				rcon = (byte) ((rcon & 0xFF)<<1);
 				rcon = (byte)(((int)rcon)^((int)(mod)));
 			}
-			rconTable[i-1] = rcon;
+			rTable[i-1] = rcon;
 		}
-		return rconTable;
+		return rTable;
 	}
 }

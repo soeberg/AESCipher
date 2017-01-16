@@ -1,8 +1,15 @@
+package Cipher.AESCipher;
 import java.util.BitSet;
 
 public class KeyExpander {
 	
-	public static BitSet[] KeyExpansion(byte[] key, BitSet[] w, int Nk){
+	private SBox sbox;
+	
+	public KeyExpander(SBox sbox){
+		this.sbox = sbox;
+	}
+	
+	public void KeyExpansion(byte[] key, BitSet[] w, int Nk){
 		BitSet temp;
 		
 		int i = 0;
@@ -28,24 +35,22 @@ public class KeyExpander {
 			w[i].xor(temp);
 			i++;
 		}
-		
-		return w;
 	}
 	
-	private static BitSet SubWord(BitSet word){
+	private BitSet SubWord(BitSet word){
 		byte[] bytes = word.toByteArray();
 		byte[] subbytes = new byte[word.length()];
 		for (int i = 0; i < bytes.length; i++){
-			subbytes[i] = SBox.getbyte(bytes[i]);
+			subbytes[i] = this.sbox.getbyte(bytes[i]);
 		}
 		return BitSet.valueOf(subbytes);
 	}
 
-	private static BitSet InvSubWord(BitSet word){
+	private BitSet InvSubWord(BitSet word){
 		byte[] bytes = word.toByteArray();
 		byte[] subbytes = new byte[word.length()];
 		for (int i = 0; i < bytes.length; i++){
-			subbytes[i] = SBox.getByteInv(bytes[i]);
+			subbytes[i] = this.sbox.getByteInv(bytes[i]);
 		}
 		return BitSet.valueOf(subbytes);
 	}
@@ -68,10 +73,10 @@ public class KeyExpander {
 
 
 	
-	public static BitSet XORRcon(BitSet b1,int i){
+	public BitSet XORRcon(BitSet b1,int i){
 		//i++; skal måske tilføjes
 		BitSet temp = (BitSet) b1.clone();
-		BitSet Rcon = SBox.getRcon(i);
+		BitSet Rcon = this.sbox.getRcon(i);
 		temp.xor(Rcon);
 		return temp;
 	}
