@@ -34,6 +34,15 @@ public class KeyExpander {
 		}
 		return BitSet.valueOf(subbytes);
 	}
+
+	private static BitSet InvSubWord(BitSet word){
+		byte[] bytes = word.toByteArray();
+		byte[] subbytes = new byte[word.length()];
+		for (int i = 0; i < bytes.length; i++){
+			subbytes[i] = SBox.getByteInv(bytes[i]);
+		}
+		return BitSet.valueOf(subbytes);
+	}
 	
 	private static BitSet RotWord(BitSet word){
 		byte[] bytes = word.toByteArray();
