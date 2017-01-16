@@ -4,7 +4,7 @@ public class KeyExpander {
 	
 	public static byte[] KeyExpansion(byte[] key, BitSet[] w, int Nk){
 		BitSet temp;
-		
+		byte[] t2 = w[0].toByteArray();
 		
 		int i = 0;
 		
@@ -27,13 +27,21 @@ public class KeyExpander {
 	}
 	
 	private static BitSet SubWord(BitSet word){
-		return null;
+		byte[] bytes = word.toByteArray();
+		byte[] subbytes = new byte[word.length()];
+		for (int i = 0; i < bytes.length; i++){
+			subbytes[i] = SBox.getbyte(bytes[i]);
+		}
+		return BitSet.valueOf(subbytes);
 	}
 	
 	private static BitSet RotWord(BitSet word){
 		return null;
 	}
 	
+	public BitSet XORRCon(BitSet b1,int i){
+		return null;
+	}
 	
 
 }

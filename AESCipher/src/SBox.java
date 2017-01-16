@@ -1,6 +1,6 @@
 
 public class SBox {
-	private int[][] sbox;
+	private static int[][] sbox;
 	
 	public SBox(){
 		this.sbox = new int[][]{
@@ -23,7 +23,7 @@ public class SBox {
 								};
 	}
 	
-	public byte getbyte(byte b){
+	public static byte getbyte(byte b){
 		int i = b & 0xFF;
 		int y = i % 16;
 		int x = (i-y)/16;
