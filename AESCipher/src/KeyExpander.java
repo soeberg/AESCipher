@@ -1,15 +1,16 @@
+import java.util.BitSet;
 
 public class KeyExpander {
 	
-	public static byte[] KeyExpansion(byte[] key, Word[] w, int Nk){
-		Word temp;
+	public static byte[] KeyExpansion(byte[] key, BitSet[] w, int Nk){
+		BitSet temp;
 		
 		
 		int i = 0;
 		
 		//first Nk keys
 		while (i < Nk){
-			w[i] = new Word(new byte[]{key[i*4], key[i*4+1], key[i*4+1], key[i*4+2]});
+			w[i] = BitSet.valueOf(new byte[]{key[i*4], key[i*4+1], key[i*4+1], key[i*4+2]});
 			i++;
 		}
 		
@@ -25,11 +26,11 @@ public class KeyExpander {
 		return null;
 	}
 	
-	private static Word SubWord(Word word){
+	private static BitSet SubWord(BitSet word){
 		return null;
 	}
 	
-	private static Word RotWord(Word word){
+	private static BitSet RotWord(BitSet word){
 		return null;
 	}
 	
