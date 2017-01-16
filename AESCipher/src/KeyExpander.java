@@ -4,7 +4,6 @@ public class KeyExpander {
 	
 	public static BitSet[] KeyExpansion(byte[] key, BitSet[] w, int Nk){
 		BitSet temp;
-		byte[] t2 = w[0].toByteArray();
 		
 		int i = 0;
 		
