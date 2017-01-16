@@ -9,14 +9,14 @@ public class KeyExpander {
 		this.sbox = sbox;
 	}
 	
-	public void KeyExpansion(byte[] key, BitSet[] w, int Nk){
-		BitSet temp;
+	public void KeyExpansion(byte[] key, byte[][] w, int Nk){
+		byte[] temp = new byte[4];
 		
 		int i = 0;
 		
 		//first Nk keys
 		while (i < Nk){
-			w[i] = BitSet.valueOf(new byte[]{key[i*4], key[i*4+1], key[i*4+1], key[i*4+2]});
+			w[i] = new byte[]{key[i*4], key[i*4+1], key[i*4+1], key[i*4+2]};
 			i++;
 		}
 		
@@ -31,19 +31,18 @@ public class KeyExpander {
 					temp = SubWord(temp);
 				}
 			}
-			w[i] = (BitSet) w[i-Nk].clone();
-			w[i].xor(temp);
+			w[i] = w[i-Nk].clone();
+			// w[i]. xor with temp 
 			i++;
 		}
 	}
 	
-	private BitSet SubWord(BitSet word){
-		byte[] bytes = word.toByteArray();
-		byte[] subbytes = new byte[word.length()];
+	private byte[] SubWord(byte[] bytes){
+		byte[] subbytes = new byte[bytes.length];
 		for (int i = 0; i < bytes.length; i++){
 			subbytes[i] = this.sbox.getbyte(bytes[i]);
 		}
-		return BitSet.valueOf(subbytes);
+		return subbytes;
 	}
 
 	private BitSet InvSubWord(BitSet word){
@@ -55,29 +54,26 @@ public class KeyExpander {
 		return BitSet.valueOf(subbytes);
 	}
 	
-	private static BitSet RotWord(BitSet word){
-		byte[] bytes = word.toByteArray();
+	private static byte[] RotWord(byte[] bytes){
 		byte[] result = new byte[bytes.length];
 		System.arraycopy(bytes, 1, result, 0, bytes.length - 1);
 		result[bytes.length-1] = bytes[0];
-		return BitSet.valueOf(result);
+		return result;
 	}
 
-	private static BitSet InvRotWord(BitSet word) {
-		byte[] bytes = word.toByteArray();
+	private static byte[] InvRotWord(byte[] bytes) {
 		byte[] result = new byte[bytes.length];
 		System.arraycopy(bytes, 0, result, 1, bytes.length - 1);
 		result[0] = bytes[bytes.length-1];
-		return BitSet.valueOf(result);
+		return result;
 	}
 
 
 	
-	public BitSet XORRcon(BitSet b1,int i){
+	public byte[] XORRcon(byte[] b1,int i){
 		//i++; skal måske tilføjes
-		BitSet temp = (BitSet) b1.clone();
-		BitSet Rcon = this.sbox.getRcon(i);
-		temp.xor(Rcon);
+		byte[] temp = b1.clone();
+		byte[] Rcon = this.sbox.getRcon(i);
 		return temp;
 	}
 	

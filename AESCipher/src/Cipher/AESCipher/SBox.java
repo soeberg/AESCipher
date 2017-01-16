@@ -46,9 +46,9 @@ public class SBox {
 		return b;
 	}
 	
-	public BitSet getRcon(int i){
+	public byte[] getRcon(int i){
 		byte[] bytes = new byte[]{this.rconTable[i],(byte) 0, (byte) 0, (byte) 0};
-		return BitSet.valueOf(bytes);
+		return bytes;
 	}
 	
 	private byte[] buildRconTable(){
