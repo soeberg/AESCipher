@@ -10,3 +10,9 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+AESCipher/AESCipher.iml
+AESCipher/.idea/compiler.xml
+AESCipher/.idea/misc.xml
+AESCipher/.idea/modules.xml
+AESCipher/.idea/copyright/profiles_settings.xml
+AESCipher/.idea/workspace.xml
