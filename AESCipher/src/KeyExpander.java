@@ -2,7 +2,7 @@ import java.util.BitSet;
 
 public class KeyExpander {
 	
-	public static byte[] KeyExpansion(byte[] key, BitSet[] w, int Nk){
+	public static BitSet[] KeyExpansion(byte[] key, BitSet[] w, int Nk){
 		BitSet temp;
 		byte[] t2 = w[0].toByteArray();
 		
@@ -19,11 +19,18 @@ public class KeyExpander {
 		while (i < w.length){
 			temp = w[i-1];
 			if (i % Nk == 0){
-				temp = SubWord(RotWord(temp));
+				temp = XORRcon(SubWord(RotWord(temp)),i/Nk);
+			} else{
+				if(Nk > 6 && i % Nk == 4){
+					temp = SubWord(temp);
+				}
 			}
+			w[i] = (BitSet) w[i-Nk].clone();
+			w[i].xor(temp);
+			i++;
 		}
 		
-		return null;
+		return w;
 	}
 	
 	private static BitSet SubWord(BitSet word){
@@ -57,8 +64,12 @@ public class KeyExpander {
 
 
 	
-	public BitSet XORRCon(BitSet b1,int i){
-		return null;
+	public static BitSet XORRcon(BitSet b1,int i){
+		//i++; skal måske tilføjes
+		BitSet temp = (BitSet) b1.clone();
+		BitSet Rcon = SBox.getRcon(i);
+		temp.xor(Rcon);
+		return temp;
 	}
 	
 
