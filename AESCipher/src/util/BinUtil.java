@@ -35,7 +35,7 @@ public class BinUtil {
 				result = result^temp;
 			}
 		}
-		if (temp != result){
+		if (s % 2 == 1){
 			result = result^base;
 		}
 		
