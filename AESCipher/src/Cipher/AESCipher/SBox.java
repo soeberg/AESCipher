@@ -1,5 +1,7 @@
 package Cipher.AESCipher;
 import java.util.BitSet;
+import net.cscott.jutil.*;
+import util.BinUtil;
 
 public class SBox {
 	private int[][] sbox;
@@ -46,9 +48,9 @@ public class SBox {
 		return b;
 	}
 	
-	public byte[] getRcon(int i){
+	public int getRcon(int i){
 		byte[] bytes = new byte[]{this.rconTable[i],(byte) 0, (byte) 0, (byte) 0};
-		return bytes;
+		return BinUtil.byteArrayToInteger(bytes);
 	}
 	
 	private byte[] buildRconTable(){

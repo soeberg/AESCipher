@@ -1,5 +1,11 @@
 package Cipher.AESCipher;
-import java.util.BitSet;
+import net.cscott.jutil.*;
+import util.BinUtil;;
+
+/*
+ * key = 128 bit
+ * word = 32 bit
+ */
 
 public class KeyExpander {
 	
@@ -9,14 +15,14 @@ public class KeyExpander {
 		this.sbox = sbox;
 	}
 	
-	public void KeyExpansion(byte[] key, byte[][] w, int Nk){
-		byte[] temp = new byte[4];
+	public void KeyExpansion(byte[] key, int[] w, int Nk){
+		int temp = 0;
 		
 		int i = 0;
 		
 		//first Nk keys
 		while (i < Nk){
-			w[i] = new byte[]{key[i*4], key[i*4+1], key[i*4+1], key[i*4+2]};
+			w[i] = BinUtil.byteArrayToInteger(new byte[]{key[i*4], key[i*4+1], key[i*4+1], key[i*4+2]});
 			i++;
 		}
 		
@@ -45,13 +51,12 @@ public class KeyExpander {
 		return subbytes;
 	}
 
-	private BitSet InvSubWord(BitSet word){
-		byte[] bytes = word.toByteArray();
-		byte[] subbytes = new byte[word.length()];
-		for (int i = 0; i < bytes.length; i++){
+	private BitString InvSubWord(int word){
+		BitString subbytes = new BitString(word.length());
+		for (int i = 0; i < word.length; i++){
 			subbytes[i] = this.sbox.getByteInv(bytes[i]);
 		}
-		return BitSet.valueOf(subbytes);
+		return BitString;
 	}
 	
 	private static byte[] RotWord(byte[] bytes){
