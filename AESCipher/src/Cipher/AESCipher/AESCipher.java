@@ -76,11 +76,11 @@ public class AESCipher {
 	}
 	
 	public byte[] shiftRow(byte[] stateRow) {
-		byte temp = stateRow[stateRow.length-1];
-		for (int i = (stateRow.length - 1); i >= 0; i--) {                
-		   stateRow[i+1] = stateRow[i];
+		byte temp = stateRow[0];
+		for (int i = 0; i >= stateRow.length-1; i++) {                
+		   stateRow[i] = stateRow[i+1];
 		}
-		stateRow[0] = temp;
+		stateRow[stateRow.length-1] = temp;
 		return stateRow;
 	}
 
