@@ -1,5 +1,4 @@
 package Cipher.AESCipher;
-import net.cscott.jutil.*;
 import util.BinUtil;;
 
 /*
@@ -22,7 +21,7 @@ public class KeyExpander {
 		
 		//first Nk keys
 		while (i < Nk){
-			w[i] = BinUtil.byteArrayToInteger(new byte[]{key[i*4], key[i*4+1], key[i*4+1], key[i*4+2]});
+			w[i] = BinUtil.byteArrayToInteger(new byte[]{key[i*4], key[i*4+1], key[i*4+2], key[i*4+3]});
 			i++;
 		}
 		
@@ -31,12 +30,13 @@ public class KeyExpander {
 		while (i < w.length){
 			temp = w[i-1];
 			if (i % Nk == 0){
-				temp = XORRcon(SubWord(RotWord(temp)),i/Nk);
+				temp = SubWord(RotWord(temp))^sbox.getRcon(i/Nk);
 			} else{
 				if(Nk > 6 && i % Nk == 4){
 					temp = SubWord(temp);
 				}
 			}
+			
 			w[i] = w[i-Nk];
 			// w[i]. xor with temp 
 			i++;
