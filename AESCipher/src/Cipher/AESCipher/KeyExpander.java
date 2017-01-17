@@ -52,26 +52,28 @@ public class KeyExpander {
 		return BinUtil.byteArrayToInteger(subbytes);
 	}
 
-	private BitString InvSubWord(int word){
-		BitString subbytes = new BitString(word.length());
-		for (int i = 0; i < word.length; i++){
-			subbytes[i] = this.sbox.getByteInv(bytes[i]);
+	private int InvSubWord(int word){
+		byte[] bytes = BinUtil.integerToByteArray(word);
+		for (int i = 0; i < bytes.length; i++){
+			bytes[i] = this.sbox.getByteInv(bytes[i]);
 		}
-		return BitString;
+		return BinUtil.byteArrayToInteger(bytes);
 	}
 	
-	private static byte[] RotWord(byte[] bytes){
+	private static int RotWord(int word){
+		byte[] bytes = BinUtil.integerToByteArray(word);
 		byte[] result = new byte[bytes.length];
 		System.arraycopy(bytes, 1, result, 0, bytes.length - 1);
 		result[bytes.length-1] = bytes[0];
-		return result;
+		return BinUtil.byteArrayToInteger(result);
 	}
 
-	private static byte[] InvRotWord(byte[] bytes) {
+	private static int InvRotWord(int word) {
+		byte[] bytes = BinUtil.integerToByteArray(word);
 		byte[] result = new byte[bytes.length];
 		System.arraycopy(bytes, 0, result, 1, bytes.length - 1);
 		result[0] = bytes[bytes.length-1];
-		return result;
+		return BinUtil.byteArrayToInteger(result);
 	}
 
 }
