@@ -21,7 +21,7 @@ public class KeyExpander {
 		
 		//first Nk keys
 		while (i < Nk){
-			w[i] = BinUtil.byteArrayToInteger(new byte[]{key[i*4], key[i*4+1], key[i*4+2], key[i*4+3]});
+			w[i] = BinUtil.byteArrayToInteger(new byte[]{key[i], key[4+i], key[8+i], key[12+i]});
 			i++;
 		}
 		

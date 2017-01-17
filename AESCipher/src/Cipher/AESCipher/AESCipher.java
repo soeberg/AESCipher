@@ -8,13 +8,14 @@ public class AESCipher {
 	
 	private int Nb = 4;
 	private int Nk = 4;
-	private int Nr = 10;
+	private int Nr;
 	private SBox sbox;
 	private KeyExpander ke;
 	private int[] w; 
 	private byte[] cipherKey;
 	
-	public AESCipher(byte[] cipherKey){
+	public AESCipher(byte[] cipherKey, int Nr){
+		this.Nr = Nr;
 		this.sbox = new SBox();
 		this.ke = new KeyExpander(sbox);
 		this.w = new int[Nb*(Nr+1)];
@@ -22,21 +23,21 @@ public class AESCipher {
 		ke.KeyExpansion(this.cipherKey, w, Nk);
 	}
 	
-	public String cipher(byte[] in, int[] word){
+	public byte[][] cipher(byte[] in){
 		byte[][] state = fillState(in);
 		
-		AddRoundKey(state, Arrays.copyOfRange(w, 0,3));
+		AddRoundKey(state, Arrays.copyOfRange(w, 0,4));
 		
 		for(int i = 1; i < Nr; i++){
 			subBytes(state);
-			//shiftRows(state);
+			shiftRows(state);
 			//mixColumns(state);
 			AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb-1));
 			
 		}
 		
 		
-		return "";
+		return state;
 	}
 	
 	public String decipher(String cipherText, String key ){
@@ -44,12 +45,11 @@ public class AESCipher {
 	}
 	
 	private byte[][] fillState(byte[] in){
-		byte[][] state = new byte[][]{
-										Arrays.copyOfRange(in, 0, 3),
-										Arrays.copyOfRange(in, 4, 7),
-										Arrays.copyOfRange(in, 8, 11),
-										Arrays.copyOfRange(in, 12, 15)
-			};
+		byte[][] state = new byte[4][4];
+		for (int i = 0; i < state.length; i++){
+			state[i] = new byte[]{in[i], in[i+4], in[i+8], in[i+12]};
+		}
+		
 		return state;
 	}
 	
