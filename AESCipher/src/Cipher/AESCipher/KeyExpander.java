@@ -37,18 +37,19 @@ public class KeyExpander {
 					temp = SubWord(temp);
 				}
 			}
-			w[i] = w[i-Nk].clone();
+			w[i] = w[i-Nk];
 			// w[i]. xor with temp 
 			i++;
 		}
 	}
 	
-	private byte[] SubWord(byte[] bytes){
+	private int SubWord(int word){
+		byte[] bytes = BinUtil.integerToByteArray(word);
 		byte[] subbytes = new byte[bytes.length];
 		for (int i = 0; i < bytes.length; i++){
 			subbytes[i] = this.sbox.getbyte(bytes[i]);
 		}
-		return subbytes;
+		return BinUtil.byteArrayToInteger(subbytes);
 	}
 
 	private BitString InvSubWord(int word){
@@ -72,15 +73,5 @@ public class KeyExpander {
 		result[0] = bytes[bytes.length-1];
 		return result;
 	}
-
-
-	
-	public byte[] XORRcon(byte[] b1,int i){
-		//i++; skal måske tilføjes
-		byte[] temp = b1.clone();
-		byte[] Rcon = this.sbox.getRcon(i);
-		return temp;
-	}
-	
 
 }
