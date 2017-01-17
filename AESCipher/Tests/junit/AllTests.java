@@ -31,8 +31,12 @@ public class AllTests {
 		ke.KeyExpansion(cipherkey, w, Nk);
 		
 		for(int i = 0; i < w.length; i++){
-			System.out.println(Integer.toBinaryString(BinUtil.byteArrayToInteger(BinUtil.integerToByteArray(w[i]))));
-			System.out.println(Integer.toBinaryString(BinUtil.byteArrayToInteger(new byte[]{(byte) 0x1e,(byte) 0x14,(byte) 0xc4,(byte) 0x54,(byte) 0x00,(byte) 0x92,(byte) 0x47,(byte) 0x99})));
+			byte[] bytes = BinUtil.integerToByteArray(w[i]);
+			System.out.print("{ ");
+			for(int j = 0; j < bytes.length; j++){
+				System.out.print(Integer.toHexString(BinUtil.integerValue(bytes[j]))+", ");
+			}
+			System.out.println("}");
 		}
 	}
 }
