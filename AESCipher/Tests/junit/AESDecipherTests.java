@@ -60,9 +60,61 @@ public class AESDecipherTests {
 		
 		for(int i = 0; i < invInputShiftRow.length; i++){
 			for(int j = 0; j < invInputShiftRow[i].length; j++){
-				System.out.println(invInputShiftRow[i][j]);
 				assertEquals("Current index is: ("+i+","+j+").", invShiftRowResult[i][j],invInputShiftRow[i][j]);
 			}
+		}
+	}
+	
+	@Test
+	public void testInvSubBytes() {
+		int Nr = 0;
+		AESCipher ac = new AESCipher(cipherkey,Nr);
+
+		byte[][] state = new byte[][]{
+										{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
+										{(byte) 0x27,(byte)  0xbf,(byte)  0xb4,(byte)  0x41},
+										{(byte) 0x11,(byte)  0x98,(byte)  0x5d,(byte)  0x52},
+										{(byte) 0xae,(byte)  0xf1,(byte)  0xe5,(byte)  0x30}};
+		byte[][] result = new byte[][]{
+										{(byte) 0x19,(byte)  0xa0,(byte)  0x9a,(byte)  0xe9},
+										{(byte) 0x3d,(byte)  0xf4,(byte)  0xc6,(byte)  0xf8},
+										{(byte) 0xe3,(byte)  0xe2,(byte)  0x8d,(byte)  0x48},
+										{(byte) 0xbe,(byte)  0x2b,(byte)  0x2a,(byte)  0x08}};
+		Class[] acarg = new Class[1];
+		acarg[0] = byte[][].class;
+		Method method;
+		try {
+			method = ac.getClass().getDeclaredMethod("invSubBytes", acarg);
+			method.setAccessible(true);
+			byte[][][] acparam = new byte[][][]{state};
+			
+			Object o = method.invoke(ac, state);
+			
+			for(int i = 0; i<state.length; i++){
+				for(int j = 0; j<state[i].length; j++){
+					assertEquals("Current index is: ("+i+","+j+").",result[i][j], state[i][j]);
+				}
+			}
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
 		}
 	}
 }
