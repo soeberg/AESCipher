@@ -38,7 +38,7 @@ public class SBox {
 	public byte getByteInv(byte b) {
 		for (int y = 0; y < this.sbox.length; y++) {
 			for (int x = 0; x < this.sbox[y].length; x++) {
-				if (this.sbox[x][y] == b) {
+				if (this.sbox[x][y] == BinUtil.integerValue(b)) {
 					return new Integer((x*16)+y).byteValue();
 				}
 			}
