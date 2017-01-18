@@ -28,12 +28,18 @@ public class AESCipher {
 		
 		AddRoundKey(state, Arrays.copyOfRange(w, 0,4));
 		
-		for(int i = 1; i < Nr; i++){
+		for(int i = 1; i < Nr-1; i++){
 			subBytes(state);
 			shiftRows(state);
 			mixColumns(state);
-			AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb-1));
+			AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb));
 			
+		}
+		
+		if(Nr >= 10){
+			subBytes(state);
+			shiftRows(state);
+			AddRoundKey(state, Arrays.copyOfRange(w,Nr*Nb,(Nr+1)*Nb));
 		}
 		
 		
@@ -69,19 +75,8 @@ public class AESCipher {
 
 	public void shiftRows(byte[][] state){
 		for (int i = 0; i < state.length; i++) {
-			for (int j = 0; j < i; j++) {
-				state[i] = shiftRow(state[i]);
-			}
+			state[i] = BinUtil.integerToByteArray(Integer.rotateLeft(BinUtil.byteArrayToInteger(state[i]),i*8));
 		}
-	}
-	
-	public byte[] shiftRow(byte[] stateRow) {
-		byte temp = stateRow[0];
-		for (int i = 0; i < stateRow.length-1; i++) {                
-		   stateRow[i] = stateRow[i+1];
-		}
-		stateRow[stateRow.length-1] = temp;
-		return stateRow;
 	}
 	
 	public void mixColumns(byte[][] state) {

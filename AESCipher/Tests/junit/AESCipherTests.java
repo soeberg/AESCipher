@@ -12,6 +12,7 @@ import org.junit.Test;
 import Cipher.AESCipher.AESCipher;
 import Cipher.AESCipher.KeyExpander;
 import Cipher.AESCipher.SBox;
+import util.BinUtil;
 
 public class AESCipherTests {
 	
@@ -54,11 +55,98 @@ public class AESCipherTests {
 		
 		for(int i = 0; i < output.length; i++){
 			for(int j = 0; j < output[i].length; j++){
-				assertEquals(roundZeroResult[i][j],output[i][j]);
+				assertEquals("Current index is: ("+i+","+j+").",roundZeroResult[i][j],output[i][j]);
 			}
 		}
 	}
 	
+	@Test
+	public void testRoundOne(){
+		int Nr = 1;
+		AESCipher ac = new AESCipher(cipherkey,Nr);
+		byte[][] output = ac.cipher(input);
+		
+		byte[][] roundZeroResult = new byte[][]{
+												{(byte) 0xa4,(byte)  0x68,(byte)  0x6b,(byte)  0x02},
+												{(byte) 0x9c,(byte)  0x9f,(byte)  0x5b,(byte)  0x6a},
+												{(byte) 0x7f,(byte)  0x35,(byte)  0xea,(byte)  0x50},
+												{(byte) 0xf2,(byte)  0x2b,(byte)  0x43,(byte)  0x49}};
+		
+		for(int i = 0; i < output.length; i++){
+			for(int j = 0; j < output[i].length; j++){
+				assertEquals("Current index is: ("+i+","+j+").",roundZeroResult[i][j],output[i][j]);
+			}
+		}
+	}
+	
+	
+	@Test
+	public void testRoundTen(){
+		int Nr = 10;
+		AESCipher ac = new AESCipher(cipherkey,Nr);
+		byte[][] output = ac.cipher(input);
+		
+		byte[][] roundZeroResult = new byte[][]{
+												{(byte) 0x39,(byte)  0x02,(byte)  0xdc,(byte)  0x19},
+												{(byte) 0x25,(byte)  0xdc,(byte)  0x11,(byte)  0x6a},
+												{(byte) 0x84,(byte)  0x09,(byte)  0x85,(byte)  0x0b},
+												{(byte) 0x1d,(byte)  0xfb,(byte)  0x97,(byte)  0x32}};
+		
+		for(int i = 0; i < output.length; i++){
+			for(int j = 0; j < output[i].length; j++){
+				assertEquals("Current index is: ("+i+","+j+").",roundZeroResult[i][j],output[i][j]);
+			}
+		}
+	}
+	
+	@Test
+	public void fillStateTest(){
+		int Nr = 0;
+		AESCipher ac = new AESCipher(cipherkey, Nr);
+		Class[] acarg = new Class[1];
+		acarg[0] = byte[].class;
+		byte[][] result = new byte[][]{
+										{(byte) 0x32,(byte) 0x88,(byte) 0x31,(byte) 0xe0},
+										{(byte) 0x43,(byte) 0x5a,(byte) 0x31,(byte) 0x37},
+										{(byte) 0xf6,(byte) 0x30,(byte) 0x98,(byte) 0x07},
+										{(byte) 0xa8,(byte) 0x8d,(byte) 0xa2,(byte) 0x34}};
+		Method method;
+		try {
+			method = ac.getClass().getDeclaredMethod("fillState", acarg);
+			method.setAccessible(true);
+			byte[][] state = (byte[][]) method.invoke(ac, input);
+			for (int i = 0; i < state.length; i++){
+				for(int j = 0; j < state[i].length; j++){
+					assertEquals("Current index is: ("+i+","+j+").",result[i][j], state[i][j]);
+				}
+			}
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	
+	/*
+	 * Testing af round one.
+	 */
 	@Test
 	public void testRoundOneSubBytes(){
 		byte[][] state = new byte[][]{
@@ -80,13 +168,13 @@ public class AESCipherTests {
 		try {
 			method = ac.getClass().getDeclaredMethod("subBytes", acarg);
 			method.setAccessible(true);
-			byte[][][] acparam = new byte[][][]{state};
+			
 			
 			Object o = method.invoke(ac, state);
 			
 			for(int i = 0; i<state.length; i++){
 				for(int j = 0; j<state[i].length; j++){
-					assertEquals(result[i][j], state[i][j]);
+					assertEquals("Current index is: ("+i+","+j+").",result[i][j], state[i][j]);
 				}
 			}
 		} catch (NoSuchMethodException e) {
@@ -104,6 +192,55 @@ public class AESCipherTests {
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testRoundOneShiftRows(){
+		int Nr = 0;
+		AESCipher ac = new AESCipher(cipherkey, Nr);
+		
+		byte[][] state = new byte[][]{
+									{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
+									{(byte) 0x27,(byte)  0xbf,(byte)  0xb4,(byte)  0x41},
+									{(byte) 0x11,(byte)  0x98,(byte)  0x5d,(byte)  0x52},
+									{(byte) 0xae,(byte)  0xf1,(byte)  0xe5,(byte)  0x30}};
+		
+		byte[][] result = new byte[][]{
+									{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
+									{(byte) 0xbf,(byte)  0xb4,(byte)  0x41,(byte)  0x27},
+									{(byte) 0x5d,(byte)  0x52,(byte)  0x11,(byte)  0x98},
+									{(byte) 0x30,(byte)  0xae,(byte)  0xf1,(byte)  0xe5}};
+		ac.shiftRows(state);
+		for (int i = 0; i < state.length; i++){
+			for(int j = 0; j < state[i].length; j++){
+				assertEquals("Current index is: ("+i+","+j+").",BinUtil.integerValue(result[i][j]),BinUtil.integerValue(state[i][j]));
+			}
+		}
+	}
+	
+	@Test
+	public void testRoundOneMixColumn(){
+		int Nr = 0;
+		AESCipher ac = new AESCipher(cipherkey,Nr);
+
+		byte[][] inputMixColumn = new byte[][]{
+										{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
+										{(byte) 0xbf,(byte)  0xb4,(byte)  0x41,(byte)  0x27},
+										{(byte) 0x5d,(byte)  0x52,(byte)  0x11,(byte)  0x98},
+										{(byte) 0x30,(byte)  0xae,(byte)  0xf1,(byte)  0xe5}};
+										
+		ac.mixColumns(inputMixColumn);
+		byte[][] mixColumnResult = new byte[][]{
+												{(byte) 0x04,(byte)  0xe0,(byte)  0x48,(byte)  0x28},
+												{(byte) 0x66,(byte)  0xcb,(byte)  0xf8,(byte)  0x06},
+												{(byte) 0x81,(byte)  0x19,(byte)  0xd3,(byte)  0x26},
+												{(byte) 0xe5,(byte)  0x9a,(byte)  0x7a,(byte)  0x4c}};
+		
+		for(int i = 0; i < inputMixColumn.length; i++){
+			for(int j = 0; j < inputMixColumn[i].length; j++){
+				assertEquals("Current index is: ("+i+","+j+").", mixColumnResult[i][j],inputMixColumn[i][j]);
+			}
 		}
 	}
 	
@@ -134,7 +271,7 @@ public class AESCipherTests {
 			
 			for(int i = 0; i<state.length; i++){
 				for(int j = 0; j<state[i].length; j++){
-					assertEquals(result[i][j], state[i][j]);
+					assertEquals("Current index is: ("+i+","+j+").",result[i][j], state[i][j]);
 				}
 			}
 		} catch (NoSuchMethodException e) {
@@ -159,31 +296,6 @@ public class AESCipherTests {
 			fail();
 		}
 	}
-
-	@Test
-	public void testMixColumn(){
-		int Nr = 0;
-		AESCipher ac = new AESCipher(cipherkey,Nr);
-
-		byte[][] inputMixColumn = new byte[][]{
-										{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
-										{(byte) 0xbf,(byte)  0xb4,(byte)  0x41,(byte)  0x27},
-										{(byte) 0x5d,(byte)  0x52,(byte)  0x11,(byte)  0x98},
-										{(byte) 0x30,(byte)  0xae,(byte)  0xf1,(byte)  0xe5}};
-										
-		ac.mixColumns(inputMixColumn);
-		byte[][] mixColumnResult = new byte[][]{
-												{(byte) 0x04,(byte)  0xe0,(byte)  0x48,(byte)  0x28},
-												{(byte) 0x66,(byte)  0xcb,(byte)  0xf8,(byte)  0x06},
-												{(byte) 0x81,(byte)  0x19,(byte)  0xd3,(byte)  0x26},
-												{(byte) 0xe5,(byte)  0x9a,(byte)  0x7a,(byte)  0x4c}};
-		
-		for(int i = 0; i < inputMixColumn.length; i++){
-			for(int j = 0; j < inputMixColumn[i].length; j++){
-				assertEquals(mixColumnResult[i][j],inputMixColumn[i][j]);
-			}
-		}
-	}
 	
 
 	@Test
@@ -206,7 +318,7 @@ public class AESCipherTests {
 		
 		for(int i = 0; i < inputShiftRow.length; i++){
 			for(int j = 0; j < inputShiftRow[i].length; j++){
-				assertEquals(shiftRowResult[i][j],inputShiftRow[i][j]);
+				assertEquals("Current index is: ("+i+","+j+").", shiftRowResult[i][j],inputShiftRow[i][j]);
 				
 			}
 		}
