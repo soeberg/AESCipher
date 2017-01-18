@@ -104,18 +104,8 @@ public class AESCipher {
 
 	public void invShiftRows(byte[][] state){
 		for (int i = 0; i < state.length; i++) {
-			for (int j = 0; j < i; j++) {
-				state[i] = shiftRow(state[i]);
-			}
+			state[i] = BinUtil.integerToByteArray(Integer.rotateRight(BinUtil.byteArrayToInteger(state[i]),i*8));
 		}
-	}
-	public byte[] invShiftRow(byte[] stateRow) {
-		byte temp = stateRow[stateRow.length-1];
-		for (int i = 0; i < stateRow.length-1; i++) {                
-		   stateRow[i+1] = stateRow[i];
-		}
-		stateRow[0] = temp;
-		return stateRow;
 	}
 	
 	public void mixColumns(byte[][] state) {
