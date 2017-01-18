@@ -77,7 +77,7 @@ public class AESCipher {
 	
 	public byte[] shiftRow(byte[] stateRow) {
 		byte temp = stateRow[0];
-		for (int i = 0; i >= stateRow.length-1; i++) {                
+		for (int i = 0; i < stateRow.length-1; i++) {                
 		   stateRow[i] = stateRow[i+1];
 		}
 		stateRow[stateRow.length-1] = temp;
