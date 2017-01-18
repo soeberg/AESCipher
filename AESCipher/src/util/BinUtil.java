@@ -22,7 +22,7 @@ public class BinUtil {
 		int p = 7;
 		int temp = 0;
 		int result = 0;
-		for (int i= 1; i <8;i++){
+		for (int i= 0; i <8;i++){
 			if((s>>i) % 2 == 1){
 				temp = base;
 				for (int j = 0; j < i; j++){
@@ -34,9 +34,6 @@ public class BinUtil {
 				}
 				result = result^temp;
 			}
-		}
-		if (s % 2 == 1){
-			result = result^base;
 		}
 		
 		return integerToByteArray(result)[3];
