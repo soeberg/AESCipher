@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import Cipher.AESCipher.KeyExpander;
 import Cipher.AESCipher.SBox;
+import util.BinUtil;
 
 public class SBoxTests {
 	
@@ -35,8 +36,57 @@ public class SBoxTests {
 	}
 	
 	@Test
-	public void dummyTest(){
-		System.out.println("no SBoxTests are implemented");
+	public void getRconiFourTest(){
+		int i = 4;
+		assertEquals(1,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiEightTest(){
+		int i = 8;
+		assertEquals(2,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiSixteenTest(){
+		int i = 16;
+		assertEquals(8,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiTwentyTest(){
+		int i = 20;
+		assertEquals(0x10,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiTwentyfourTest(){
+		int i = 24;
+		assertEquals(0x20,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiTwentyEightTest(){
+		int i = 28;
+		assertEquals(0x40,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiThirtytwoTest(){
+		int i = 32;
+		assertEquals(0x80,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiThirtySixTest(){
+		int i = 36;
+		assertEquals(0x1b,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
+	}
+	
+	@Test
+	public void getRconiFourtyTest(){
+		int i = 40;
+		assertEquals(0x36,BinUtil.integerValue(BinUtil.integerToByteArray(sbox.getRcon(i/4))[0]));
 	}
 
 

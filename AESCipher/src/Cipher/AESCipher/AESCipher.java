@@ -26,20 +26,22 @@ public class AESCipher {
 	public byte[][] cipher(byte[] in){
 		byte[][] state = fillState(in);
 		
-		AddRoundKey(state, Arrays.copyOfRange(w, 0,4));
+		state = AddRoundKey(state, Arrays.copyOfRange(w, 0,4));
 		
-		for(int i = 1; i < Nr-1; i++){
-			subBytes(state);
-			shiftRows(state);
-			mixColumns(state);
-			AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb));
-			
+		
+		for(int i = 1; i < Nr+1; i++){
+			if(i < 10){
+				state =subBytes(state);
+				state = shiftRows(state);
+				state = mixColumns(state);
+				state = AddRoundKey(state, Arrays.copyOfRange(w, (i)*Nb, (i+1)*Nb));
+			}			
 		}
 		
-		if(Nr >= 10){
-			subBytes(state);
-			shiftRows(state);
-			AddRoundKey(state, Arrays.copyOfRange(w,Nr*Nb,(Nr+1)*Nb));
+		if(Nr == 10){
+			state = subBytes(state);
+			state = shiftRows(state);
+			state = AddRoundKey(state, Arrays.copyOfRange(w,Nr*Nb,(Nr+1)*Nb));
 		}
 		
 		
@@ -74,32 +76,43 @@ public class AESCipher {
 		return state;
 	}
 	
-	private void subBytes(byte[][] state){
+	private byte[][] subBytes(byte[][] state){
 		for (int i = 0; i < state.length; i++){
 			for(int j = 0; j < state[i].length; j++){
 				state[i][j] = sbox.getbyte(state[i][j]);
 			}
 		}
+		return state;
 	}
 	
-	private void invSubBytes(byte[][] state){
+	private byte[][] invSubBytes(byte[][] state){
 		for (int i = 0; i < state.length; i++){
 			for(int j = 0; j < state[i].length; j++){
 				state[i][j] = sbox.getByteInv(state[i][j]);
 			}
 		}
+		return state;
 	}
 	
-	private void AddRoundKey(byte[][] state, int[] words){
-		for(int i = 0; i < state.length; i++){
-			state[i] = BinUtil.integerToByteArray(BinUtil.byteArrayToInteger(state[i])^words[i]);
+	public byte[][] AddRoundKey(byte[][] state, int[] words){
+		byte[][] m = BinUtil.transformMatrix(state);
+		for(int i = 0; i < m.length; i++){
+			int x = BinUtil.byteArrayToInteger(m[i]);
+			int y = words[i];
+			m[i] = BinUtil.integerToByteArray(BinUtil.byteArrayToInteger(m[i])^words[i]);
 		}
+		m = BinUtil.transformMatrix(m);
+		
+		
+		return m;
+		
 	}
 
-	public void shiftRows(byte[][] state){
+	public byte[][] shiftRows(byte[][] state){
 		for (int i = 0; i < state.length; i++) {
 			state[i] = BinUtil.integerToByteArray(Integer.rotateLeft(BinUtil.byteArrayToInteger(state[i]),i*8));
 		}
+		return state;
 	}
 
 	public void invShiftRows(byte[][] state){
@@ -108,7 +121,7 @@ public class AESCipher {
 		}
 	}
 	
-	public void mixColumns(byte[][] state) {
+	public byte[][] mixColumns(byte[][] state) {
 		
 		for (int i = 0; i < state.length; i++){
 			byte[] result = mixColumn(new byte[]{state[0][i], state[1][i], state[2][i], state[3][i]});
@@ -116,6 +129,7 @@ public class AESCipher {
 				state[j][i] = result[j];
 			}
 		}
+		return state;
 	}
 	
 	public byte[] mixColumn(byte[] stateColumn) {
@@ -127,10 +141,10 @@ public class AESCipher {
 		// BinUtil.modShift((byte)0x02, s[0], fixed);
 		// result[0] = (byte) (s[0]^s[1]^s[2]^s[3]); 
 		
-		result[0] = (byte) ((BinUtil.modShift((byte)0x02, s[0], fixed))^(BinUtil.modShift((byte)0x03, s[1], fixed))^s[2]^s[3]);
-		result[1] = (byte) (s[0]^(BinUtil.modShift((byte)0x02, s[1], fixed))^(BinUtil.modShift((byte)0x03, s[2], fixed))^s[3]);
-		result[2] = (byte) (s[0]^s[1]^(BinUtil.modShift((byte)0x02, s[2], fixed))^(BinUtil.modShift((byte)0x03, s[3], fixed)));
-		result[3] = (byte) ((BinUtil.modShift((byte)0x03, s[0], fixed))^s[1]^s[2]^(BinUtil.modShift((byte)0x02, s[3], fixed)));
+		result[0] = (byte) ((BinUtil.modShift((byte)0x02, s[0]))^(BinUtil.modShift((byte)0x03, s[1]))^s[2]^s[3]);
+		result[1] = (byte) (s[0]^(BinUtil.modShift((byte)0x02, s[1]))^(BinUtil.modShift((byte)0x03, s[2]))^s[3]);
+		result[2] = (byte) (s[0]^s[1]^(BinUtil.modShift((byte)0x02, s[2]))^(BinUtil.modShift((byte)0x03, s[3])));
+		result[3] = (byte) ((BinUtil.modShift((byte)0x03, s[0]))^s[1]^s[2]^(BinUtil.modShift((byte)0x02, s[3])));
 		return result;
 	}
 
@@ -152,22 +166,22 @@ public class AESCipher {
 		// BinUtil.modShift((byte)0x02, s[0], fixed);
 		// result[0] = (byte) (s[0]^s[1]^s[2]^s[3]); 
 		
-		result[0] = (byte) ((BinUtil.modShift((byte)0x0e, s[0], fixed))^
-							(BinUtil.modShift((byte)0x0b, s[1], fixed))^
-							(BinUtil.modShift((byte)0x0d, s[2], fixed))^
-							(BinUtil.modShift((byte)0x09, s[3], fixed))); 
-		result[1] = (byte) ((BinUtil.modShift((byte)0x09, s[0], fixed))^
-							(BinUtil.modShift((byte)0x0e, s[1], fixed))^
-							(BinUtil.modShift((byte)0x0b, s[2], fixed))^
-							(BinUtil.modShift((byte)0x0d, s[3], fixed))); 
-		result[2] = (byte) ((BinUtil.modShift((byte)0x0d, s[0], fixed))^
-							(BinUtil.modShift((byte)0x09, s[1], fixed))^
-							(BinUtil.modShift((byte)0x0e, s[2], fixed))^
-							(BinUtil.modShift((byte)0x0b, s[3], fixed))); 
-		result[3] = (byte) ((BinUtil.modShift((byte)0x0b, s[0], fixed))^
-							(BinUtil.modShift((byte)0x0d, s[1], fixed))^
-							(BinUtil.modShift((byte)0x09, s[2], fixed))^
-							(BinUtil.modShift((byte)0x0e, s[3], fixed))); 
+		result[0] = (byte) ((BinUtil.modShift((byte)0x0e, s[0]))^
+							(BinUtil.modShift((byte)0x0b, s[1]))^
+							(BinUtil.modShift((byte)0x0d, s[2]))^
+							(BinUtil.modShift((byte)0x09, s[3]))); 
+		result[1] = (byte) ((BinUtil.modShift((byte)0x09, s[0]))^
+							(BinUtil.modShift((byte)0x0e, s[1]))^
+							(BinUtil.modShift((byte)0x0b, s[2]))^
+							(BinUtil.modShift((byte)0x0d, s[3]))); 
+		result[2] = (byte) ((BinUtil.modShift((byte)0x0d, s[0]))^
+							(BinUtil.modShift((byte)0x09, s[1]))^
+							(BinUtil.modShift((byte)0x0e, s[2]))^
+							(BinUtil.modShift((byte)0x0b, s[3]))); 
+		result[3] = (byte) ((BinUtil.modShift((byte)0x0b, s[0]))^
+							(BinUtil.modShift((byte)0x0d, s[1]))^
+							(BinUtil.modShift((byte)0x09, s[2]))^
+							(BinUtil.modShift((byte)0x0e, s[3]))); 
 		return result;
 	}
 

@@ -16,7 +16,7 @@ public class BinUtil {
 		return byteArrayToInteger(new byte[]{0x00, 0x00, 0x00, b});
 	}
 	
-	public static byte modShift(byte x, byte y, int mod){
+	public static byte modShift(byte x, byte y){
 		int base = integerValue(x);
 		int s = integerValue(y);
 		int p = 7;
@@ -29,7 +29,7 @@ public class BinUtil {
 					if(temp < Math.pow(2,7)){
 						temp = temp<<1;
 					} else {
-						temp = (int) (((temp<<1)^mod) % Math.pow(2,8));
+						temp = (int) ((temp<<1)^0x1b) %256;
 					}
 				}
 				result = result^temp;
@@ -38,6 +38,16 @@ public class BinUtil {
 		
 		return integerToByteArray(result)[3];
 		
+	}
+	
+	public static byte[][] transformMatrix(byte[][] m){
+		byte[][] tm = new byte[m[0].length][m.length];
+		for (int i = 0; i<m.length; i++){
+			for (int j = 0; j<m[i].length; j++){
+				tm[i][j] = m[j][i];
+			}
+		}
+		return tm;
 	}
 
 }

@@ -21,10 +21,9 @@ public class KeyExpander {
 		
 		//first Nk keys
 		while (i < Nk){
-			w[i] = BinUtil.byteArrayToInteger(new byte[]{key[i], key[4+i], key[8+i], key[12+i]});
+			w[i] = BinUtil.byteArrayToInteger(new byte[]{key[4*i], key[4*i+1], key[4*i+2], key[4*i+3]});
 			i++;
 		}
-		
 		i = Nk;
 		
 		while (i < w.length){
@@ -34,46 +33,25 @@ public class KeyExpander {
 			} else{
 				if(Nk > 6 && i % Nk == 4){
 					temp = SubWord(temp);
+				
 				}
 			}
 			
-			w[i] = w[i-Nk];
-			// w[i]. xor with temp 
+			w[i] = w[i-Nk]^temp; 
 			i++;
 		}
 	}
 	
 	private int SubWord(int word){
 		byte[] bytes = BinUtil.integerToByteArray(word);
-		byte[] subbytes = new byte[bytes.length];
 		for (int i = 0; i < bytes.length; i++){
-			subbytes[i] = this.sbox.getbyte(bytes[i]);
-		}
-		return BinUtil.byteArrayToInteger(subbytes);
-	}
-
-	private int InvSubWord(int word){
-		byte[] bytes = BinUtil.integerToByteArray(word);
-		for (int i = 0; i < bytes.length; i++){
-			bytes[i] = this.sbox.getByteInv(bytes[i]);
+			bytes[i] = this.sbox.getbyte(bytes[i]);
 		}
 		return BinUtil.byteArrayToInteger(bytes);
 	}
 	
 	private static int RotWord(int word){
-		byte[] bytes = BinUtil.integerToByteArray(word);
-		byte[] result = new byte[bytes.length];
-		System.arraycopy(bytes, 1, result, 0, bytes.length - 1);
-		result[bytes.length-1] = bytes[0];
-		return BinUtil.byteArrayToInteger(result);
-	}
-
-	private static int InvRotWord(int word) {
-		byte[] bytes = BinUtil.integerToByteArray(word);
-		byte[] result = new byte[bytes.length];
-		System.arraycopy(bytes, 0, result, 1, bytes.length - 1);
-		result[0] = bytes[bytes.length-1];
-		return BinUtil.byteArrayToInteger(result);
+		return Integer.rotateLeft(word,8);
 	}
 
 }

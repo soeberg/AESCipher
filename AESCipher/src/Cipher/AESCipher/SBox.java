@@ -47,24 +47,33 @@ public class SBox {
 	}
 	
 	public int getRcon(int i){
-		byte[] bytes = new byte[]{this.rconTable[i],(byte) 0, (byte) 0, (byte) 0};
-		return BinUtil.byteArrayToInteger(bytes);
+		return BinUtil.byteArrayToInteger(new byte[]{rconTable[i], 0, 0, 0});
 	}
 	
-	private byte[] buildRconTable(){
+	/*private byte[] buildRconTable(){
 		byte[] rTable = new byte[255];
-		byte mod = (byte) 143;
-		byte rcon= 1;
-		rTable[0] =rcon; 
+		int mod = 143;
+		int rcon= 1;
+		rTable[1] = (byte) rcon; 
 		for( int i= 2; i < 255; i++){
-			if( (rcon & 0xFF) <= 128){
-				rcon = (byte) ((rcon & 0xFF)<<1);
+			if( rcon < 128){
+				rcon = rcon<<1;
 			} else {
-				rcon = (byte) ((rcon & 0xFF)<<1);
-				rcon = (byte)(((int)rcon)^((int)(mod)));
+				rcon = ((rcon<<1)^mod);
 			}
-			rTable[i-1] = rcon;
+			rTable[i] = BinUtil.integerToByteArray(rcon)[3];
 		}
 		return rTable;
+	}*/
+	
+	private byte[] buildRconTable(){
+		byte[] table =new byte[255];
+		byte result = 1;
+		table[1] = 1;
+		for(int i = 2; i<255; i++){
+			result = BinUtil.modShift(result, (byte)0x02);
+			table[i] = result;
+		}
+		return table;
 	}
 }
