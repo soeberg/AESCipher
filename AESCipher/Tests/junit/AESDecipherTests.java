@@ -117,4 +117,29 @@ public class AESDecipherTests {
 			fail();
 		}
 	}
+	
+	@Test
+	public void testInvMixColumn(){
+		int Nr = 0;
+		AESCipher ac = new AESCipher(cipherkey,Nr);
+
+		byte[][] inputMixColumn = new byte[][]{
+										{(byte) 0x04,(byte)  0xe0,(byte)  0x48,(byte)  0x28},
+										{(byte) 0x66,(byte)  0xcb,(byte)  0xf8,(byte)  0x06},
+										{(byte) 0x81,(byte)  0x19,(byte)  0xd3,(byte)  0x26},
+										{(byte) 0xe5,(byte)  0x9a,(byte)  0x7a,(byte)  0x4c}};
+
+		byte[][] mixColumnResult = new byte[][]{
+										{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
+										{(byte) 0xbf,(byte)  0xb4,(byte)  0x41,(byte)  0x27},
+										{(byte) 0x5d,(byte)  0x52,(byte)  0x11,(byte)  0x98},
+										{(byte) 0x30,(byte)  0xae,(byte)  0xf1,(byte)  0xe5}};
+										
+		ac.invMixColumns(inputMixColumn);
+		for(int i = 0; i < inputMixColumn.length; i++){
+			for(int j = 0; j < inputMixColumn[i].length; j++){
+				assertEquals("Current index is: ("+i+","+j+").", mixColumnResult[i][j],inputMixColumn[i][j]);
+			}
+		}
+	}
 }
