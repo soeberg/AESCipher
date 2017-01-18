@@ -36,10 +36,77 @@ public class KeyExpanderTests {
 	}
 
 	@Test
-	public void testRoundZeroKeyMatrixZero(){		
+	public void testRoundZeroKeyMatrix(){	
+		int round = 0;
 		int Nk = 4;
-		byte[][] keymatrix = new byte[][]{};
+		byte[][] keymatrix = new byte[][]{
+											{(byte) 0x2b,(byte) 0x28,(byte) 0xab,(byte) 0x09},
+											{(byte) 0x7e,(byte) 0xae,(byte) 0xf7,(byte) 0xcf},
+											{(byte) 0x15,(byte) 0xd2,(byte) 0x15,(byte) 0x4f},
+											{(byte) 0x16,(byte) 0xa6,(byte) 0x88,(byte) 0x3c}
+											};
+		ke.KeyExpansion(cipherkey, w, Nk);
+		
+		for(int i = 4*round; i < Nk; i++){
+			byte[] row = BinUtil.integerToByteArray(w[i]);
+			for(int j = 0; j < row.length; j++){
+				assertEquals(keymatrix[i-(4*round)][j], row[j]);				
+			}
+		}
 		
 	}
-
+	
+	@Test
+	public void testRoundOneKeyMatrix(){
+		int round = 1;
+		int Nk = 4;
+		byte[][] keymatrix = new byte[][]{
+											{(byte) 0xa0,(byte)  0x88,(byte)  0x23,(byte)  0x2a},
+											{(byte) 0xfa,(byte)  0x54,(byte)  0xa3,(byte)  0x6c},
+											{(byte) 0xfe,(byte)  0x2c,(byte)  0x39,(byte)  0x76},
+											{(byte) 0x17,(byte)  0xb1,(byte)  0x39,(byte)  0x05}						};
+		ke.KeyExpansion(cipherkey, w, Nk);								
+		for(int i = (4*round); i < Nk; i++){
+			byte[] row = BinUtil.integerToByteArray(w[i]);
+			for(int j = 0; j < row.length; j++){
+				assertEquals(keymatrix[i-(4*round)][j], row[j]);				
+			}
+		}
+	}
+	
+	@Test
+	public void testRoundTwoKeyMatrix(){
+		int round = 2;
+		int Nk = 4;
+		byte[][] keymatrix = new byte[][]{
+											{(byte) 0xf2,(byte)  0x7a,(byte)  0x59,(byte)  0x73},
+											{(byte) 0xc2,(byte)  0x96,(byte)  0x35,(byte)  0x59},
+											{(byte) 0x95,(byte)  0xb9,(byte)  0x80,(byte)  0xf6},
+											{(byte) 0xf2,(byte)  0x43,(byte)  0x7a,(byte)  0x7f}};
+		ke.KeyExpansion(cipherkey, w, Nk);								
+		for(int i = (4*round); i < Nk; i++){
+			byte[] row = BinUtil.integerToByteArray(w[i]);
+			for(int j = 0; j < row.length; j++){
+				assertEquals(keymatrix[i-(4*round)][j], row[j]);				
+			}
+		}
+	}
+	
+	@Test
+	public void testRoundTenKeyMatrix(){
+		int round = 10; 
+		int Nk = 4;
+		byte[][] keymatrix = new byte[][]{
+											{(byte) 0xd0,(byte)  0xc9,(byte)  0xe1,(byte)  0xb6},
+											{(byte) 0x14,(byte)  0xee,(byte)  0x3f,(byte)  0x63},
+											{(byte) 0xf9,(byte)  0x25,(byte)  0x0c,(byte)  0x0c},
+											{(byte) 0xa8,(byte)  0x89,(byte)  0xc8,(byte)  0xa6}};
+		ke.KeyExpansion(cipherkey, w, Nk);								
+		for(int i = (4*round); i < Nk; i++){
+			byte[] row = BinUtil.integerToByteArray(w[i]);
+			for(int j = 0; j < row.length; j++){
+				assertEquals(keymatrix[i-(4*round)][j], row[j]);				
+			}
+		}
+	}
 }
