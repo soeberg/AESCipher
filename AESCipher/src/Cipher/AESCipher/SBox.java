@@ -1,6 +1,4 @@
 package Cipher.AESCipher;
-import java.util.BitSet;
-import net.cscott.jutil.*;
 import util.BinUtil;
 
 public class SBox {
