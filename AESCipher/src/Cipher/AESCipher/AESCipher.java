@@ -40,8 +40,23 @@ public class AESCipher {
 		return state;
 	}
 	
-	public String decipher(String cipherText, String key ){
-		return "";
+	public byte[][] decipher(byte[] in) {
+		byte[][] state = fillState(in);
+		
+		AddRoundKey(state, Arrays.copyOfRange(w, Nr*Nb, (Nr+1)*Nb-1));
+		
+		for(int i = Nr; i > 1; i--){
+			invShiftRows(state);
+			invSubBytes(state);
+			AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb-1));
+			invMixColumns(state);
+		}
+		
+		invShiftRows(state);
+		invSubBytes(state);
+		AddRoundKey(state, Arrays.copyOfRange(w, 0, Nb-1));
+		
+		return state;
 	}
 	
 	private byte[][] fillState(byte[] in){
@@ -61,6 +76,14 @@ public class AESCipher {
 		}
 	}
 	
+	private void invSubBytes(byte[][] state){
+		for (int i = 0; i < state.length; i++){
+			for(int j = 0; j < state[i].length; j++){
+				state[i][j] = sbox.getByteInv(state[i][j]);
+			}
+		}
+	}
+	
 	private void AddRoundKey(byte[][] state, int[] words){
 		for(int i = 0; i < state.length; i++){
 			state[i] = BinUtil.integerToByteArray(BinUtil.byteArrayToInteger(state[i])^words[i]);
@@ -74,13 +97,28 @@ public class AESCipher {
 			}
 		}
 	}
-	
 	public byte[] shiftRow(byte[] stateRow) {
 		byte temp = stateRow[0];
 		for (int i = 0; i < stateRow.length-1; i++) {                
 		   stateRow[i] = stateRow[i+1];
 		}
 		stateRow[stateRow.length-1] = temp;
+		return stateRow;
+	}
+
+	public void invShiftRows(byte[][] state){
+		for (int i = 0; i < state.length; i++) {
+			for (int j = 0; j < i; j++) {
+				state[i] = shiftRow(state[i]);
+			}
+		}
+	}
+	public byte[] invShiftRow(byte[] stateRow) {
+		byte temp = stateRow[stateRow.length-1];
+		for (int i = 0; i < stateRow.length-1; i++) {                
+		   stateRow[i+1] = stateRow[i];
+		}
+		stateRow[0] = temp;
 		return stateRow;
 	}
 	
@@ -107,6 +145,43 @@ public class AESCipher {
 		result[1] = (byte) (s[0]^(BinUtil.modShift((byte)0x02, s[1], fixed))^(BinUtil.modShift((byte)0x03, s[2], fixed))^s[3]);
 		result[2] = (byte) (s[0]^s[1]^(BinUtil.modShift((byte)0x02, s[2], fixed))^(BinUtil.modShift((byte)0x03, s[3], fixed)));
 		result[3] = (byte) ((BinUtil.modShift((byte)0x03, s[0], fixed))^s[1]^s[2]^(BinUtil.modShift((byte)0x02, s[3], fixed)));
+		return result;
+	}
+
+	public void invMixColumns(byte[][] state) {
+		
+		for (int i = 0; i < state.length; i++){
+			byte[] result = invMixColumn(new byte[]{state[0][i], state[1][i], state[2][i], state[3][i]});
+			for (int j = 0; j < state.length; j++) {
+				state[j][i] = result[j];
+			}
+		}
+	}
+	public byte[] invMixColumn(byte[] stateColumn) {
+		byte[] s = stateColumn;
+		byte[] result = new byte[]{0x00,0x00,0x00,0x00};
+		int fixed = 0x1b;
+		
+		// Bruges som template til udregningen:
+		// BinUtil.modShift((byte)0x02, s[0], fixed);
+		// result[0] = (byte) (s[0]^s[1]^s[2]^s[3]); 
+		
+		result[0] = (byte) ((BinUtil.modShift((byte)0x0e, s[0], fixed))^
+							(BinUtil.modShift((byte)0x0b, s[1], fixed))^
+							(BinUtil.modShift((byte)0x0d, s[2], fixed))^
+							(BinUtil.modShift((byte)0x09, s[3], fixed))); 
+		result[1] = (byte) ((BinUtil.modShift((byte)0x09, s[0], fixed))^
+							(BinUtil.modShift((byte)0x0e, s[1], fixed))^
+							(BinUtil.modShift((byte)0x0b, s[2], fixed))^
+							(BinUtil.modShift((byte)0x0d, s[3], fixed))); 
+		result[2] = (byte) ((BinUtil.modShift((byte)0x0d, s[0], fixed))^
+							(BinUtil.modShift((byte)0x09, s[1], fixed))^
+							(BinUtil.modShift((byte)0x0e, s[2], fixed))^
+							(BinUtil.modShift((byte)0x0b, s[3], fixed))); 
+		result[3] = (byte) ((BinUtil.modShift((byte)0x0b, s[0], fixed))^
+							(BinUtil.modShift((byte)0x0d, s[1], fixed))^
+							(BinUtil.modShift((byte)0x09, s[2], fixed))^
+							(BinUtil.modShift((byte)0x0e, s[3], fixed))); 
 		return result;
 	}
 
