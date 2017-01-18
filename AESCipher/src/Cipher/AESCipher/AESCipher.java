@@ -31,7 +31,7 @@ public class AESCipher {
 		for(int i = 1; i < Nr; i++){
 			subBytes(state);
 			shiftRows(state);
-			//mixColumns(state);
+			mixColumns(state);
 			AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb-1));
 			
 		}
@@ -82,6 +82,32 @@ public class AESCipher {
 		}
 		stateRow[stateRow.length-1] = temp;
 		return stateRow;
+	}
+	
+	public void mixColumns(byte[][] state) {
+		
+		for (int i = 0; i < state.length; i++){
+			byte[] result = mixColumn(new byte[]{state[0][i], state[1][i], state[2][i], state[3][i]});
+			for (int j = 0; j < state.length; j++) {
+				state[j][i] = result[j];
+			}
+		}
+	}
+	
+	public byte[] mixColumn(byte[] stateColumn) {
+		byte[] s = stateColumn;
+		byte[] result = new byte[]{0x00,0x00,0x00,0x00};
+		int fixed = 0x1b;
+		
+		// Bruges som template til udregningen:
+		// BinUtil.modShift((byte)0x02, s[0], fixed);
+		// result[0] = (byte) (s[0]^s[1]^s[2]^s[3]); 
+		
+		result[0] = (byte) ((BinUtil.modShift((byte)0x02, s[0], fixed))^(BinUtil.modShift((byte)0x03, s[1], fixed))^s[2]^s[3]);
+		result[1] = (byte) (s[0]^(BinUtil.modShift((byte)0x02, s[1], fixed))^(BinUtil.modShift((byte)0x03, s[2], fixed))^s[3]);
+		result[2] = (byte) (s[0]^s[1]^(BinUtil.modShift((byte)0x02, s[2], fixed))^(BinUtil.modShift((byte)0x03, s[3], fixed)));
+		result[3] = (byte) ((BinUtil.modShift((byte)0x03, s[0], fixed))^s[1]^s[2]^(BinUtil.modShift((byte)0x02, s[3], fixed)));
+		return result;
 	}
 
 }
