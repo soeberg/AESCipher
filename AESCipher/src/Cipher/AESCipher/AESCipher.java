@@ -51,18 +51,20 @@ public class AESCipher {
 	public byte[][] decipher(byte[] in) {
 		byte[][] state = fillState(in);
 		
-		AddRoundKey(state, Arrays.copyOfRange(w, Nr*Nb, (Nr+1)*Nb-1));
+		state = AddRoundKey(state, Arrays.copyOfRange(w, Nr*Nb, (Nr+1)*Nb));
 		
-		for(int i = Nr; i > 1; i--){
-			invShiftRows(state);
-			invSubBytes(state);
-			AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb-1));
-			invMixColumns(state);
+		
+		for(int i = Nr-1; i >= 1; i--){
+			
+			state = invShiftRows(state);
+			state = invSubBytes(state);
+			state = AddRoundKey(state, Arrays.copyOfRange(w, i*Nb, (i+1)*Nb));
+			state = invMixColumns(state);
 		}
 		
-		invShiftRows(state);
-		invSubBytes(state);
-		AddRoundKey(state, Arrays.copyOfRange(w, 0, Nb-1));
+		state = invShiftRows(state);
+		state = invSubBytes(state);
+		state = AddRoundKey(state, Arrays.copyOfRange(w, 0, Nb));
 		
 		return state;
 	}
@@ -115,10 +117,11 @@ public class AESCipher {
 		return state;
 	}
 
-	public void invShiftRows(byte[][] state){
+	public byte[][] invShiftRows(byte[][] state){
 		for (int i = 0; i < state.length; i++) {
 			state[i] = BinUtil.integerToByteArray(Integer.rotateRight(BinUtil.byteArrayToInteger(state[i]),i*8));
 		}
+		return state;
 	}
 	
 	public byte[][] mixColumns(byte[][] state) {
@@ -148,7 +151,7 @@ public class AESCipher {
 		return result;
 	}
 
-	public void invMixColumns(byte[][] state) {
+	public byte[][] invMixColumns(byte[][] state) {
 		
 		for (int i = 0; i < state.length; i++){
 			byte[] result = invMixColumn(new byte[]{state[0][i], state[1][i], state[2][i], state[3][i]});
@@ -156,6 +159,7 @@ public class AESCipher {
 				state[j][i] = result[j];
 			}
 		}
+		return state;
 	}
 	public byte[] invMixColumn(byte[] stateColumn) {
 		byte[] s = stateColumn;

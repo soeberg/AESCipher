@@ -19,6 +19,7 @@ public class AESDecipherTests {
 	static SBox sbox;
 	static KeyExpander ke;
 	static byte[] input;
+	static byte[][] in;
 	static byte[] cipherkey;
 	static int[] w;
 
@@ -27,10 +28,16 @@ public class AESDecipherTests {
 		sbox = new SBox();
 		ke = new KeyExpander(sbox);
 		input = new byte[]{	(byte) 0x32,(byte) 0x43,(byte) 0xf6,(byte) 0xa8,
-				(byte) 0x88,(byte) 0x5a,(byte) 0x30,(byte) 0x8d,
-				(byte) 0x31,(byte) 0x31,(byte) 0x98,(byte) 0xa2,
-				(byte) 0xe0,(byte) 0x37,(byte) 0x07,(byte) 0x34
+							(byte) 0x88,(byte) 0x5a,(byte) 0x30,(byte) 0x8d,
+							(byte) 0x31,(byte) 0x31,(byte) 0x98,(byte) 0xa2,
+							(byte) 0xe0,(byte) 0x37,(byte) 0x07,(byte) 0x34
 			};
+		in = new byte[][]{
+						{(byte) 0x32, (byte) 0x88, (byte) 0x31, (byte) 0xe0},
+						{(byte) 0x43, (byte) 0x5a, (byte) 0x31, (byte) 0x37},
+						{(byte) 0xf6, (byte) 0x30, (byte) 0x98, (byte) 0x07},
+						{(byte) 0xa8, (byte) 0x8d, (byte) 0xa2, (byte) 0x34}
+						};
 		cipherkey = new byte[]{
 				(byte) 0x2b,(byte) 0x7e,(byte) 0x15,(byte) 0x16,
 				(byte) 0x28,(byte) 0xae,(byte) 0xd2,(byte) 0xa6,
@@ -140,6 +147,28 @@ public class AESDecipherTests {
 			for(int j = 0; j < inputMixColumn[i].length; j++){
 				assertEquals("Current index is: ("+i+","+j+").", mixColumnResult[i][j],inputMixColumn[i][j]);
 			}
+		}
+	}
+	
+	@Test
+	public void testdecipher(){
+		int rounds = 10;
+		byte[] cipher = new byte[]{	(byte) 0x39, (byte) 0x25, (byte) 0x84, (byte) 0x1d,
+									(byte) 0x02, (byte) 0xdc, (byte) 0x09, (byte) 0xfb,
+									(byte) 0xdc, (byte) 0x11, (byte) 0x85, (byte) 0x97,
+									(byte) 0x19,(byte) 0x6a, (byte) 0x0b, (byte) 0x32};
+		
+		AESCipher ac = new AESCipher(cipherkey, rounds);
+		byte[][] out = ac.decipher(cipher);
+		
+		
+		
+		for(int i = 0; i < 4; i++){
+			for (int j = 0; j < 4; j++){
+				System.out.print(Integer.toHexString(BinUtil.integerValue(out[i][j]))+" ");
+				assertEquals(in[i][j], out[i][j]);
+			}
+			System.out.println("");
 		}
 	}
 }

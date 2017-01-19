@@ -340,7 +340,7 @@ public class AESCipherTests {
 	}
 	
 	@Test
-	public void testThroughRoundTen(){
+	public void testCipher(){
 		int rounds = 10;
 		byte[][] result = new byte[][]{
 			{(byte) 0x39,(byte)  0x02,(byte)  0xdc,(byte)  0x19},
