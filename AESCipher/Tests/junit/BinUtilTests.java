@@ -37,7 +37,7 @@ public class BinUtilTests {
 	
 	@Test
 	public void modShiftTest(){
-		assertEquals(0xae, BinUtil.integerValue(BinUtil.modShift((byte) 0x57, (byte) 0x02)));
+		assertEquals( 0xae, BinUtil.integerValue(BinUtil.modShift((byte) 0x57, (byte) 0x02)));
 		assertEquals( 0x47, BinUtil.integerValue(BinUtil.modShift((byte) 0x57, (byte) 0x04)));
 		assertEquals( 0x8e, BinUtil.integerValue(BinUtil.modShift((byte) 0x57, (byte) 0x08)));
 		assertEquals( 0x7, BinUtil.integerValue(BinUtil.modShift((byte) 0x57, (byte) 0x10)));

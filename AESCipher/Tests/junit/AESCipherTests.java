@@ -143,7 +143,6 @@ public class AESCipherTests {
 	@Test
 	public void testRoundOneShiftRows(){
 		int Nr = 0;
-		AESCipher ac = new AESCipher(cipherkey, Nr);
 		
 		byte[][] state = new byte[][]{
 									{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
@@ -156,7 +155,39 @@ public class AESCipherTests {
 									{(byte) 0xbf,(byte)  0xb4,(byte)  0x41,(byte)  0x27},
 									{(byte) 0x5d,(byte)  0x52,(byte)  0x11,(byte)  0x98},
 									{(byte) 0x30,(byte)  0xae,(byte)  0xf1,(byte)  0xe5}};
-		ac.shiftRows(state);
+		
+		AESCipher ac = new AESCipher(cipherkey, Nr);
+		Class[] acarg = new Class[1];
+		acarg[0] = byte[][].class;
+		Method method;
+		try {
+			method = ac.getClass().getDeclaredMethod("shiftRows", acarg);
+			method.setAccessible(true);
+			
+			
+			state = (byte[][]) method.invoke(ac, state);
+			
+			for(int i = 0; i<state.length; i++){
+				for(int j = 0; j<state[i].length; j++){
+					assertEquals("Current index is: ("+i+","+j+").",result[i][j], state[i][j]);
+				}
+			}
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for (int i = 0; i < state.length; i++){
 			for(int j = 0; j < state[i].length; j++){
 				assertEquals("Current index is: ("+i+","+j+").",BinUtil.integerValue(result[i][j]),BinUtil.integerValue(state[i][j]));
@@ -167,25 +198,47 @@ public class AESCipherTests {
 	@Test
 	public void testRoundOneMixColumn(){
 		int Nr = 0;
-		AESCipher ac = new AESCipher(cipherkey,Nr);
-
-		byte[][] inputMixColumn = new byte[][]{
+		byte[][] state = new byte[][]{
 										{(byte) 0xd4,(byte)  0xe0,(byte)  0xb8,(byte)  0x1e},
 										{(byte) 0xbf,(byte)  0xb4,(byte)  0x41,(byte)  0x27},
 										{(byte) 0x5d,(byte)  0x52,(byte)  0x11,(byte)  0x98},
 										{(byte) 0x30,(byte)  0xae,(byte)  0xf1,(byte)  0xe5}};
-										
-		ac.mixColumns(inputMixColumn);
-		byte[][] mixColumnResult = new byte[][]{
+		byte[][] result = new byte[][]{
 												{(byte) 0x04,(byte)  0xe0,(byte)  0x48,(byte)  0x28},
 												{(byte) 0x66,(byte)  0xcb,(byte)  0xf8,(byte)  0x06},
 												{(byte) 0x81,(byte)  0x19,(byte)  0xd3,(byte)  0x26},
 												{(byte) 0xe5,(byte)  0x9a,(byte)  0x7a,(byte)  0x4c}};
 		
-		for(int i = 0; i < inputMixColumn.length; i++){
-			for(int j = 0; j < inputMixColumn[i].length; j++){
-				assertEquals("Current index is: ("+i+","+j+").", mixColumnResult[i][j],inputMixColumn[i][j]);
+		AESCipher ac = new AESCipher(cipherkey, Nr);
+		Class[] acarg = new Class[1];
+		acarg[0] = byte[][].class;
+		Method method;
+		try {
+			method = ac.getClass().getDeclaredMethod("mixColumns", acarg);
+			method.setAccessible(true);
+													
+			state = (byte[][]) method.invoke(ac, state);
+													
+			for(int i = 0; i<state.length; i++){
+				for(int j = 0; j<state[i].length; j++){
+					assertEquals("Current index is: ("+i+","+j+").",result[i][j], state[i][j]);
+				}
 			}
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -193,13 +246,12 @@ public class AESCipherTests {
 	public void testRoundOneAddRoundKey(){
 		int Nr = 10;
 		int Nb = 4;
-		AESCipher ac = new AESCipher(cipherkey,Nr);
 		byte[][] state = new byte[][]{
-												{(byte) 0x04,(byte)  0xe0,(byte)  0x48,(byte)  0x28},
-												{(byte) 0x66,(byte)  0xcb,(byte)  0xf8,(byte)  0x06},
-												{(byte) 0x81,(byte)  0x19,(byte)  0xd3,(byte)  0x26},
-												{(byte) 0xe5,(byte)  0x9a,(byte)  0x7a,(byte)  0x4c}};
-		byte[][] result = new byte[][]{
+										{(byte) 0x04,(byte)  0xe0,(byte)  0x48,(byte)  0x28},
+										{(byte) 0x66,(byte)  0xcb,(byte)  0xf8,(byte)  0x06},
+										{(byte) 0x81,(byte)  0x19,(byte)  0xd3,(byte)  0x26},
+										{(byte) 0xe5,(byte)  0x9a,(byte)  0x7a,(byte)  0x4c}};
+		byte[][] result = new byte[][]{	
 										{(byte) 0xa4,(byte)  0x68,(byte)  0x6b,(byte)  0x02},
 										{(byte) 0x9c,(byte)  0x9f,(byte)  0x5b,(byte)  0x6a},
 										{(byte) 0x7f,(byte)  0x35,(byte)  0xea,(byte)  0x50},
@@ -211,20 +263,37 @@ public class AESCipherTests {
 		acarg[0] = byte[][].class;
 		acarg[1] = int[].class;
 		Method method;
-		byte[][] keyresult = new byte[][]{
-			{(byte) 0xa0,(byte)  0x88,(byte)  0x23,(byte)  0x2a},
-			{(byte) 0xfa,(byte)  0x54,(byte)  0xa3,(byte)  0x6c},
-			{(byte) 0xfe,(byte)  0x2c,(byte)  0x39,(byte)  0x76},
-			{(byte) 0x17,(byte)  0xb1,(byte)  0x39,(byte)  0x05}
-		};
 		int[] keys = Arrays.copyOfRange(w, 4, 8);
 		
-		state = ac.AddRoundKey(state, Arrays.copyOfRange(w, 4, 8));
-		
-		for(int i = 0; i < state.length; i++){
-			for(int j = 0; j < state[i].length; j++){
-				assertEquals("Current index is: ("+i+","+j+").", result[i][j],state[i][j]);
+		AESCipher ac = new AESCipher(cipherkey, Nr);
+		try {
+			method = ac.getClass().getDeclaredMethod("AddRoundKey", acarg);
+			method.setAccessible(true);
+			Object params[] = new Object[2];
+			params[0] = state;
+			params[1] = keys;
+			state = (byte[][]) method.invoke(ac, params);
+			
+			for(int i = 0; i<state.length; i++){
+				for(int j = 0; j<state[i].length; j++){
+					assertEquals("Current index is: ("+i+","+j+").",result[i][j], state[i][j]);
+				}
 			}
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -292,13 +361,6 @@ public class AESCipherTests {
 		
 		AESCipher ac = new AESCipher(cipherkey, rounds);
 		byte[][] out = ac.cipher(input);
-		
-		for(int i = 0; i < out.length; i++){
-			for (int j = 0; j < out[i].length; j++){
-				assertEquals(result[i][j], out[i][j]);
-			}
-			System.out.println("");
-		}
 	}
 	
 	@Test
@@ -355,10 +417,8 @@ public class AESCipherTests {
 		
 		for(int i = 0; i < out.length; i++){
 			for (int j = 0; j < out[i].length; j++){
-				System.out.print(Integer.toHexString(BinUtil.integerValue(out[i][j]))+" ");
 				assertEquals(result[i][j], out[i][j]);
 			}
-			System.out.println("");
 		}
 	}
 }
