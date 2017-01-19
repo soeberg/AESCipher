@@ -22,32 +22,31 @@ public class AES128Encryptor {
 	
 	
 	public static void main(String[] args){
-		if(args.length == 4){
-			if(args[0] == "-e"){
+		if(args.length == 3){
+			
+			if(args[0].equals("-e")){
 				
 				String file = args[1];
 				String newFile = args[2];
 				encryptFile(file, newFile);
-				System.out.print("Success! encrypted file saved as: "+newFile);
-				System.exit(1);
+				return;
 			}
 			
-			if(args[0] == "-d"){
+			if(args[0].equals("-d")){
 				String file = args[1];
 				String newFile = args[2];
 				decryptFile(file, newFile);
-				System.exit(1);
+				return;
 			}
 		}
 		
 		// Terminate due to wrong input.
-		System.out.println("the function takes 4 inputs:");
+		System.out.println("the function takes 3 inputs:");
 		System.out.println("task file newfile");
 		System.out.println("task               -e for encryption and -d for decryption");
 		System.out.println("file               path to file");
 		System.out.println("newfile            path to new file");
-		System.out.println("key                the 128 bit cipher key");
-		System.exit(0);
+		//System.exit(0);
 		
 		
 		
@@ -55,70 +54,102 @@ public class AES128Encryptor {
 	}
 	
 	private static void encryptFile(String file, String newFile){
-		Path path = Paths.get(file);
-		byte[] data;
-		try {
-			//Read file
-			data = Files.readAllBytes(path);
-			if (data == null){
-				System.out.print("Unable read any data in "+file);
+		byte[] data = readData(file);
+		
+		int padding = data.length % 16;
+		byte[] paddedData = addPadding(data);
+		
+		//Encrypt file
+		byte[] encryptedData = new byte[paddedData.length];
+		ac = new AESCipher(cipherkey, 10);
+		for(int i = 0; i < paddedData.length/16; i++){
+			byte[] temp = flattenMatrix(ac.cipher(Arrays.copyOfRange(paddedData, (i*16), (i*16)+16)));
+			
+			for(int j = 0; j < temp.length; j++){
+				encryptedData[i*16+j] = temp[j];
 			}
-			byte[] paddedData = dataPadding(data, data.length % 16);
-			
-			//Encrypt file
-			byte[] encryptedData = new byte[paddedData.length];
-			ac = new AESCipher(cipherkey, 10);
-			for(int i = 0; i < paddedData.length/16; i++){
-				byte[] temp = flattenMatrix(ac.cipher(Arrays.copyOfRange(paddedData, i, i+16)));
-				
-				for(int j = 0; j < temp.length; j++){
-					encryptedData[i*16+j] = temp[j];
-				}
-			}
-			
-			//Write file
-			Path newPath = Paths.get(newFile);
-			if(!Files.exists(newPath)){
-				Files.createFile(newPath);
-			}
-			Files.write(newPath, encryptedData);
-			
-			
-			
-			
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.print("Error reading " + file);
-			System.exit(0);
 		}
+		
+		writeData(Arrays.copyOfRange(encryptedData, 0, encryptedData.length-(padding+1)),newFile);	
 		
 		
 		
 	}
 	
 	private static void decryptFile(String file, String newFile){
+		byte[] data = readData(file);
 		
+		//Decrypt file
+		byte[] decryptedData = new byte[data.length];
+		ac = new AESCipher(cipherkey, 10);
+		for(int i = 0; i < data.length/16; i++){
+			byte[] temp = flattenMatrix(ac.decipher(Arrays.copyOfRange(data, 16*i, (16*i)+16)));
+			
+			for(int j = 0; j < temp.length; j++){
+				decryptedData[i*16+j] = temp[j];
+			}
+		}
+		decryptedData = removePadding(decryptedData);
+		writeData(decryptedData,newFile);	
 	}
 	
-	private static byte[] dataPadding(byte[] data, int padding){
-		byte[] paddedData = new byte[data.length + padding];
+	public static byte[] readData(String file){
+		Path path = Paths.get(file);
+		byte[] data;
+		try {
+			//Read file
+			data = Files.readAllBytes(path);
+			if (data == null){
+				System.out.print("Unable read any data in location: "+file);
+				//System.exit(0);
+			}
+			return data;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("Error reading " + file);
+			//System.exit(0);
+		}
+		return new byte[0];
+	}
+	
+	public static void writeData(byte[] data, String newFile){
+		try {
+			Path newPath = Paths.get(newFile);
+			if(!Files.exists(newPath)){
+				Files.createFile(newPath);
+			}
+			Files.write(newPath, data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static byte[] addPadding(byte[] data){
+		int extrapadding = data.length % 16;
+		byte[] paddedData = new byte[data.length + 16 +extrapadding];
 		for(int i = 0; i <data.length; i++){
 			paddedData[i] = data[i];
 		}
-		for(int i = data.length; i < data.length + padding; i++){
+		for(int i = data.length; i < data.length + 16+extrapadding-1; i++){
 			paddedData[i] = (byte) 0;
 		}
+		paddedData[paddedData.length-1] = (byte) extrapadding;
 		return paddedData;	
 	}
 	
-	private static byte[] flattenMatrix(byte[][] m){
+	public static byte[] removePadding(byte[] data){
+		int extrapadding = data[data.length-1];
+		return Arrays.copyOfRange(data, 0, data.length-16-extrapadding);
+	}
+	
+	public static byte[] flattenMatrix(byte[][] m){
 		byte[] data = new byte[m.length*m.length];
 		for (int i = 0; i < data.length; i++){
 			int y = i % 4;
 			int x = (i-y)/4;
-			data[i] = m[x][y];
+			data[i] = m[y][x];
 		}
 		
 		return data;

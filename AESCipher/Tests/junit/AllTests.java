@@ -10,6 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				BinUtilTests.class, 
 				KeyExpanderTests.class,
 				SBoxTests.class,
-				AESDecipherTests.class})
+				AESDecipherTests.class,
+				AES128EncryptorTests.class})
 public class AllTests {
 }

@@ -67,7 +67,7 @@ public class AESCipher {
 		return state;
 	}
 	
-	private byte[][] fillState(byte[] in){
+	public byte[][] fillState(byte[] in){
 		byte[][] state = new byte[4][4];
 		for (int i = 0; i < state.length; i++){
 			state[i] = new byte[]{in[i], in[i+4], in[i+8], in[i+12]};
